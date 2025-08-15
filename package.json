@@ -1,0 +1,31 @@
+{
+  "name": "lamagent",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/example.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc && node dist/example.js",
+    "start": "node dist/example.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "@types/node": "^24.2.1",
+    "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "@hey-api/client-fetch": "^0.13.1",
+    "@llamaindex/ollama": "^0.1.20",
+    "@llamaindex/openai": "^0.4.16",
+    "@llamaindex/workflow": "^1.1.20",
+    "ajv": "^8.17.1",
+    "dotenv": "^17.2.1",
+    "llamaindex": "^0.11.26",
+    "ollama": "^0.5.17",
+    "zod": "^3.25.76"
+  }
+}
