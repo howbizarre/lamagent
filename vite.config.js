@@ -20,6 +20,8 @@ export default defineConfig({
       external: [
         // Node.js built-ins
         'fs', 'path', 'readline', 'url', 'util', 'events', 'stream',
+        // Database
+        'better-sqlite3',
         // LlamaIndex packages
         'llamaindex',
         '@llamaindex/huggingface',
