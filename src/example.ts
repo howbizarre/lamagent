@@ -2,6 +2,7 @@ import { agent } from '@llamaindex/workflow';
 import { tool, Settings } from 'llamaindex';
 import { Ollama } from '@llamaindex/ollama';
 import { z } from 'zod';
+import { ragTool } from './rag';
 
 Settings.llm = new Ollama({
   model: 'llama3.1:8b',
@@ -50,13 +51,13 @@ async function main() {
   console.log(' Begin Thinking...');
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
-  const mathAgent = agent({
+  const agentWithRag = agent({
     timeout: 30000,
-    tools: [sumNumbers, divideNumbers],
+    tools: [sumNumbers, divideNumbers, ragTool],
     verbose: false
   });
 
-  const response = await mathAgent.run('Calculate 5 + 5, then divide the result by 2.');
+  const response = await agentWithRag.run('What is B2B from GenCloud?');
 
   console.log(JSON.stringify(response.data.result, null, 2));
 }
