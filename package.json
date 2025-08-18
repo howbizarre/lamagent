@@ -1,12 +1,12 @@
 {
   "name": "lamagent",
-  "version": "1.0.0",
+  "version": "1.1.2",
   "description": "",
-  "main": "dist/example.js",
+  "main": "dist/agent.js",
   "scripts": {
     "build": "tsc",
-    "dev": "tsx src/example.ts",
-    "start": "node dist/example.js"
+    "dev": "tsx src/agent.ts",
+    "start": "node dist/agent.js"
   },
   "keywords": [],
   "author": "",
@@ -18,14 +18,14 @@
     "typescript": "^5.9.2"
   },
   "dependencies": {
-    "@hey-api/client-fetch": "^0.13.1",
+    "@llamaindex/chroma": "^0.0.33",
+    "@llamaindex/core": "^0.6.19",
+    "@llamaindex/huggingface": "^0.1.26",
     "@llamaindex/ollama": "^0.1.20",
     "@llamaindex/openai": "^0.4.16",
     "@llamaindex/workflow": "^1.1.20",
-    "ajv": "^8.17.1",
-    "dotenv": "^17.2.1",
+    "chromadb": "^3.0.12",
     "llamaindex": "^0.11.26",
-    "ollama": "^0.5.17",
     "zod": "^3.25.76"
   }
 }
