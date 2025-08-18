@@ -57,7 +57,7 @@ async function main() {
     verbose: false
   });
 
-  const response = await agentWithRag.run('What is B2B from GenCloud? Please use the ragTool to answer this question.');
+  const response = await agentWithRag.run('Какви модули има в B2B?');
 
   console.log(JSON.stringify(response.data.result, null, 2));
 }

@@ -13,7 +13,6 @@ Settings.llm = new Ollama({
   }
 });
 
-const COLLECTION_NAME = 'b2b_rag';
 async function getDataSource() {
   console.log('Loading PDF documents...');
   const reader = new PDFReader();
