@@ -57,7 +57,7 @@ async function main() {
     verbose: false
   });
 
-  const response = await agentWithRag.run('Какви модули има в B2B?');
+  const response = await agentWithRag.run('What is the Core Components in Chroma?');
 
   console.log(JSON.stringify(response.data.result, null, 2));
 }
