@@ -57,7 +57,7 @@ async function main() {
     verbose: false
   });
 
-  const response = await agentWithRag.run('What is B2B from GenCloud?');
+  const response = await agentWithRag.run('Какво е B2B от GenCloud?');
 
   console.log(JSON.stringify(response.data.result, null, 2));
 }
