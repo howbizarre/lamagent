@@ -15,19 +15,14 @@
   "type": "module",
   "devDependencies": {
     "@types/node": "^24.2.1",
-    "tsx": "^4.20.4",
     "typescript": "^5.9.2",
     "vite": "^7.1.2",
     "vite-node": "^3.2.4"
   },
   "dependencies": {
-    "@llamaindex/chroma": "^0.0.33",
-    "@llamaindex/core": "^0.6.19",
     "@llamaindex/huggingface": "^0.1.26",
     "@llamaindex/ollama": "^0.1.20",
-    "@llamaindex/openai": "^0.4.16",
     "@llamaindex/workflow": "^1.1.20",
-    "chromadb": "^3.0.12",
     "llamaindex": "^0.11.26",
     "zod": "^3.25.76"
   }
