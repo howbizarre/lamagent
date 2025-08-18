@@ -12,11 +12,12 @@ async function main() {
     verbose: false
   });
 
-  const response = await agentTools.run('What is the Core Components in Chroma?');
-  const math = await agentTools.run('Calculate 5 + 5, then divide the result by 2.');
+  const response = await agentTools.run('What I need to start Image Watermarking App?');
+  // const math = await agentTools.run('Calculate 5 + 5, then divide the result by 2.');
 
-  console.log(JSON.parse(JSON.stringify(response.data.result, null, 2)));
-  console.log(JSON.parse(JSON.stringify(math.data.result, null, 2)));
+  console.log("Call RAG", JSON.parse(JSON.stringify(response.data.result, null, 2)));
+  // console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  // console.log("Call Math", JSON.parse(JSON.stringify(math.data.result, null, 2)));
 }
 
 void main().then(() => {
