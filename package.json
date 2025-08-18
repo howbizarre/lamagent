@@ -20,7 +20,9 @@
   "dependencies": {
     "@llamaindex/chroma": "^0.0.33",
     "@llamaindex/core": "^0.6.19",
+    "@llamaindex/huggingface": "^0.1.26",
     "@llamaindex/ollama": "^0.1.20",
+    "@llamaindex/openai": "^0.4.16",
     "@llamaindex/readers": "^3.1.18",
     "@llamaindex/workflow": "^1.1.20",
     "chromadb": "^3.0.12",
