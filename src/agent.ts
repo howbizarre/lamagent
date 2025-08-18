@@ -10,7 +10,17 @@ async function main() {
   const agentTools = agent({
     timeout: 30000,
     tools: [sumNumbers, divideNumbers, ragTool],
-    verbose: false
+    verbose: false,
+    systemPrompt: `You are a helpful AI assistant that specializes in the Image Watermarking App project. 
+Always respond in Bulgarian language. Use the RAG tool to search documentation when users ask about:
+- Installation procedures (Node.js, Rust, wasm-pack)
+- Project setup and prerequisites
+- WASM development and building
+- Image watermarking features
+- Deployment to Cloudflare
+- Troubleshooting issues
+
+Provide clear, accurate answers based on the documentation. Format your responses properly without extra tags or markup.`
   });
 
   // Създаваме readline интерфейс

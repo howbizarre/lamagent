@@ -16,11 +16,11 @@ Settings.llm = new Ollama({
 
 async function getDataSource() {
   const allDocuments: Document[] = [];
-  
+
   // Load markdown documents
   const docsDir = 'docs';
-  const markdownFiles = fs.readdirSync(docsDir).filter(file => file.endsWith('.md'));
-  
+  const markdownFiles = fs.readdirSync(docsDir).filter((file) => file.endsWith('.md'));
+
   for (const mdFile of markdownFiles) {
     const filePath = path.join(docsDir, mdFile);
     const content = fs.readFileSync(filePath, 'utf-8');
@@ -35,22 +35,22 @@ async function getDataSource() {
 
     allDocuments.push(document);
   }
-  
+
   // Create index from documents (in-memory for simplicity)
   const index = await VectorStoreIndex.fromDocuments(allDocuments);
-  
+
   return index;
 }
 
 export const ragTool = tool({
   name: 'ragTool',
   description:
-    'Use this tool to search for information in the project documentation about the Image Watermarking App (Nuxt 4 + WebAssembly). The tool performs semantic search across markdown files in the docs/ directory and returns the most relevant information. Use it when: 1) the user asks about image watermarking functionality, WASM integration, or Rust implementation; 2) you need specific information about setup, prerequisites (Node.js, Rust, wasm-pack), or build processes; 3) the user wants to know about watermark features like PNG stamps, opacity control, text watermarks, or batch processing; 4) you need answers about development workflow, deployment to Cloudflare, or troubleshooting WASM issues; 5) questions about supported formats (JPG, PNG, WebP), directory saving, or performance optimization.',
+    'Използвай този инструмент за търсене на информация в проектната документация за Image Watermarking App (Nuxt 4 + WebAssembly). Инструментът прави семантично търсене в markdown файловете в docs/ директорията и връща най-релевантната информация. Използвай го когато: 1) потребителят пита за функционалности за watermarking на изображения, WASM интеграция или Rust имплементация; 2) трябва специфична информация за setup, prerequisites (Node.js, Rust, wasm-pack) или build процеси; 3) потребителят иска да знае за watermark възможности като PNG stamps, opacity control, text watermarks или batch processing; 4) трябват отговори за development workflow, deployment към Cloudflare или troubleshooting на WASM проблеми; 5) въпроси за поддържани формати (JPG, PNG, WebP), directory saving или performance optimization.',
   parameters: z.object({
-    query: z.string().describe('The query to search for in the documentation.')
+    query: z.string().describe('Заявката за търсене в документацията.')
   }),
   execute: async ({ query }: { query: string }) => {
-    console.log(`RAG Tool SEARCH: Searching for "${query}" in documentation...`);
+    console.log(`📚 RAG Търсене: Търсене на "${query}" в документацията...`);
 
     const index = await getDataSource();
     const queryEngine = index.asQueryEngine({
@@ -60,6 +60,7 @@ export const ragTool = tool({
     const response = await queryEngine.query({ query });
     const responseText = response.toString();
 
+    console.log(`✅ Намерена информация: ${responseText.length} символа`);
     return responseText;
   }
 });
