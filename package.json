@@ -4,8 +4,9 @@
   "description": "",
   "main": "dist/agent.js",
   "scripts": {
-    "build": "tsc",
-    "dev": "tsx src/agent.ts",
+    "dev": "vite-node src/agent.ts",
+    "build": "vite build",
+    "preview": "node dist/agent.js",
     "start": "node dist/agent.js"
   },
   "keywords": [],
@@ -15,7 +16,9 @@
   "devDependencies": {
     "@types/node": "^24.2.1",
     "tsx": "^4.20.4",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "vite": "^7.1.2",
+    "vite-node": "^3.2.4"
   },
   "dependencies": {
     "@llamaindex/chroma": "^0.0.33",
