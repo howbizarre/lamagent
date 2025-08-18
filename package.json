@@ -9,7 +9,8 @@
     "preview": "node --max-old-space-size=12288 --expose-gc dist/agent.js",
     "start": "node --max-old-space-size=12288 --expose-gc dist/agent.js",
     "start:quiet": "node --max-old-space-size=12288 --expose-gc dist/agent.js --quiet",
-    "start:verbose": "node --max-old-space-size=12288 --expose-gc dist/agent.js --verbose"
+    "start:verbose": "node --max-old-space-size=12288 --expose-gc dist/agent.js --verbose",
+    "refresh-index": "node --max-old-space-size=12288 --expose-gc dist/agent.js --refresh-index"
   },
   "keywords": [],
   "author": "",

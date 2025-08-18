@@ -99,6 +99,12 @@ class SQLiteVectorStore {
     const chunks: string[] = [];
     
     try {
+      // Проверяваме размера на входния текст
+      if (text.length > 100000) {
+        log(`⚠️ Много голям текст: ${text.length} символа, ограничавам до 50000`);
+        text = text.slice(0, 50000);
+      }
+      
       const paragraphs = text.split('\n\n').filter(p => p.trim().length > 20);
       
       // Ако няма параграфи, разделяме по размер
@@ -107,11 +113,12 @@ class SQLiteVectorStore {
         while (start < text.length) {
           const end = Math.min(start + chunkSize, text.length);
           const chunk = text.slice(start, end).trim();
-          if (chunk.length > 10) {
+          if (chunk.length > 10 && chunk.length <= 2000) { // Максимален размер на chunk
             chunks.push(chunk);
           }
           start = end - overlap;
           if (start >= text.length) break;
+          if (chunks.length > 500) break; // Максимален брой chunks
         }
         return chunks;
       }
@@ -126,15 +133,18 @@ class SQLiteVectorStore {
           while (start < paragraph.length) {
             const end = Math.min(start + chunkSize, paragraph.length);
             const chunk = paragraph.slice(start, end).trim();
-            if (chunk.length > 10) {
+            if (chunk.length > 10 && chunk.length <= 2000) { // Максимален размер на chunk
               chunks.push(chunk);
             }
             start = end - overlap;
             if (start >= paragraph.length) break;
+            if (chunks.length > 500) break; // Максимален брой chunks
           }
         }
+        if (chunks.length > 500) break; // Максимален брой chunks
       }
 
+      log(`📝 Създадени ${chunks.length} части от ${text.length} символа`);
       return chunks.length > 0 ? chunks : [text.slice(0, chunkSize)]; // Fallback
     } catch (error) {
       logError('❌ Грешка при chunking:', error);
@@ -296,6 +306,67 @@ class SQLiteVectorStore {
     };
   }
 
+  getIndexedFiles(): string[] {
+    const files = this.db.prepare('SELECT DISTINCT file_path FROM documents ORDER BY file_path').all() as Array<{ file_path: string }>;
+    return files.map(f => f.file_path);
+  }
+
+  checkForNewFiles(docsDir: string): { newFiles: string[], changedFiles: string[], allFiles: string[] } {
+    const markdownFiles = fs.readdirSync(docsDir).filter((file) => file.endsWith('.md'));
+    const allFiles = markdownFiles.map(file => path.join(docsDir, file));
+    const indexedFiles = this.getIndexedFiles();
+    
+    // Намираме нови файлове
+    const newFiles = allFiles.filter(file => !indexedFiles.includes(file));
+    
+    // Проверяваме за променени файлове
+    const changedFiles: string[] = [];
+    for (const filePath of indexedFiles) {
+      if (fs.existsSync(filePath)) {
+        const content = fs.readFileSync(filePath, 'utf-8');
+        const currentHash = this.getFileHash(content);
+        
+        // Проверяваме дали hash-а е различен
+        const stored = this.db.prepare('SELECT file_hash FROM documents WHERE file_path = ? LIMIT 1')
+          .get(filePath) as { file_hash: string } | undefined;
+        
+        if (stored && stored.file_hash !== currentHash) {
+          changedFiles.push(filePath);
+        }
+      }
+    }
+    
+    return { newFiles, changedFiles, allFiles };
+  }
+
+  refreshIndex(docsDir: string = 'docs'): Promise<void> {
+    // Форсирано обновяване на индекса
+    log('🔄 Форсирано обновяване на RAG индекса...');
+    
+    if (!fs.existsSync(docsDir)) {
+      throw new Error(`Папка ${docsDir} не съществува`);
+    }
+    
+    const markdownFiles = fs.readdirSync(docsDir).filter((file) => file.endsWith('.md'));
+    log(`📁 Намерени ${markdownFiles.length} markdown файла`);
+    
+    // Изтриваме всички стари записи
+    this.db.prepare('DELETE FROM documents').run();
+    log('🗑️ Изчистени стари записи');
+    
+    // Реиндексираме всички файлове
+    const promises = markdownFiles.map(async (mdFile) => {
+      const filePath = path.join(docsDir, mdFile);
+      const content = fs.readFileSync(filePath, 'utf-8');
+      await this.indexDocument(filePath, content);
+    });
+    
+    return Promise.all(promises).then(() => {
+      const stats = this.getStats();
+      log(`✅ Индексът е обновен: ${stats.totalDocuments} документа от ${stats.totalFiles} файла`);
+    });
+  }
+
   close() {
     if (this.db) {
       this.db.close();
@@ -312,28 +383,51 @@ async function getOrCreateVectorStore(): Promise<SQLiteVectorStore> {
     
     // Проверяваме дали има индексирани документи
     const stats = vectorStore.getStats();
-    console.log(`📊 Текуща база данни: ${stats.totalDocuments} документа от ${stats.totalFiles} файла`);
+    log(`📊 Текуща база данни: ${stats.totalDocuments} документа от ${stats.totalFiles} файла`);
     
-    if (stats.totalDocuments === 0) {
-      // Индексираме всички документи само ако няма данни
-      const docsDir = 'docs';
-      if (fs.existsSync(docsDir)) {
-        const markdownFiles = fs.readdirSync(docsDir).filter((file) => file.endsWith('.md'));
-        console.log(`📚 Първоначално индексиране на ${markdownFiles.length} файла...`);
-
-        for (const mdFile of markdownFiles) {
-          const filePath = path.join(docsDir, mdFile);
-          const content = fs.readFileSync(filePath, 'utf-8');
-          await vectorStore.indexDocument(filePath, content);
-          
-          // Малка пауза между файлове за освобождаване на памет
-          await new Promise(resolve => setTimeout(resolve, 200));
-        }
-      } else {
-        console.log('⚠️ Папка docs не съществува');
+    const docsDir = 'docs';
+    if (fs.existsSync(docsDir)) {
+      // Проверяваме за нови и променени файлове
+      const { newFiles, changedFiles, allFiles } = vectorStore.checkForNewFiles(docsDir);
+      
+      log(`📁 Намерени файлове: ${allFiles.length} общо`);
+      if (newFiles.length > 0) {
+        log(`🆕 Нови файлове за индексиране: ${newFiles.map(f => path.basename(f)).join(', ')}`);
+      }
+      if (changedFiles.length > 0) {
+        log(`� Променени файлове за реиндексиране: ${changedFiles.map(f => path.basename(f)).join(', ')}`);
+      }
+      
+      // Индексираме нови файлове
+      for (const filePath of newFiles) {
+        const content = fs.readFileSync(filePath, 'utf-8');
+        await vectorStore.indexDocument(filePath, content);
+        
+        // Малка пауза между файлове за освобождаване на памет
+        await new Promise(resolve => setTimeout(resolve, 200));
+      }
+      
+      // Реиндексираме променени файлове
+      for (const filePath of changedFiles) {
+        const content = fs.readFileSync(filePath, 'utf-8');
+        log(`🔄 Реиндексиране на ${path.basename(filePath)} (открити промени)`);
+        await vectorStore.indexDocument(filePath, content);
+        
+        // Малка пауза между файлове за освобождаване на памет
+        await new Promise(resolve => setTimeout(resolve, 200));
+      }
+      
+      if (newFiles.length === 0 && changedFiles.length === 0 && stats.totalFiles > 0) {
+        log('✅ Всички файлове са актуални');
+      }
+      
+      // Показваме финалната статистика
+      const finalStats = vectorStore.getStats();
+      if (finalStats.totalFiles !== stats.totalFiles || finalStats.totalDocuments !== stats.totalDocuments) {
+        log(`📊 Обновена база данни: ${finalStats.totalDocuments} документа от ${finalStats.totalFiles} файла`);
       }
     } else {
-      console.log('✅ Използване на съществуващия индекс');
+      logError('⚠️ Папка docs не съществува');
     }
   }
   
@@ -433,3 +527,6 @@ process.on('SIGINT', () => {
   }
   process.exit(0);
 });
+
+// Експортиране на класа за външни нужди
+export { SQLiteVectorStore };
