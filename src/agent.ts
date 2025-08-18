@@ -43,7 +43,7 @@ Provide clear, accurate answers based on the documentation. Format your response
         return;
       }
       
-      if (question.toLowerCase() === 'exit') {
+      if (question.toLowerCase() === 'exit' || question.toLowerCase() === 'еьит') {
         console.log('\n👋 Goodbye!');
         rl.close();
         return;
