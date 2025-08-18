@@ -15,7 +15,6 @@ Settings.llm = new Ollama({
 });
 
 async function getDataSource() {
-  console.log('Loading documents...');
   const allDocuments: Document[] = [];
   
   // Load markdown documents
@@ -33,23 +32,12 @@ async function getDataSource() {
         file_type: 'markdown'
       }
     });
+
     allDocuments.push(document);
-    console.log(`Loaded markdown document: ${mdFile} (${content.length} chars)`);
-  }
-  
-  console.log(`Total loaded documents: ${allDocuments.length}`);
-  
-  // Debug: Show content of first few documents
-  for (let i = 0; i < Math.min(3, allDocuments.length); i++) {
-    const content = allDocuments[i].getText();
-    const metadata = allDocuments[i].metadata;
-    console.log(`Document ${i + 1} (${metadata.file_name || 'Unknown'}) preview (${content.length} chars): ${content.substring(0, 200)}...`);
   }
   
   // Create index from documents (in-memory for simplicity)
-  console.log('Creating vector index...');
   const index = await VectorStoreIndex.fromDocuments(allDocuments);
-  console.log('Vector index created successfully');
   
   return index;
 }
@@ -61,17 +49,15 @@ export const ragTool = tool({
     query: z.string().describe('The query to search for in the documentation.'),
   }),
   execute: async ({ query }: { query: string }) => {
-    console.log(`RAG Tool: Searching for "${query}" in documentation...`);
+    console.log(`RAG Tool SEARCH: Searching for "${query}" in documentation...`);
+
     const index = await getDataSource();
     const queryEngine = index.asQueryEngine({
       similarityTopK: 5 // Return top 5 most relevant chunks
     });
+
     const response = await queryEngine.query({ query });
-    console.log(`RAG Tool: Found relevant information for query "${query}"`);
-    
-    // Debug: Show first part of response
     const responseText = response.toString();
-    console.log(`RAG Response preview: ${responseText.substring(0, 200)}...`);
     
     return responseText;
   },
