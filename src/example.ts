@@ -19,6 +19,8 @@ const sumNumbers = tool({
   }),
 
   execute: ({ a, b }: { a: number; b: number }) => {
+    console.log(`Calculating sum of ${a} and ${b}`);
+
     const result = a + b;
     return result.toString();
   }
@@ -33,6 +35,8 @@ const divideNumbers = tool({
   }),
 
   execute: ({ a, b }: { a: number; b: number }) => {
+    console.log(`Calculating division of ${a} by ${b}`);
+
     if (b === 0) {
       return 'Error: Cannot divide by zero';
     }
@@ -43,7 +47,7 @@ const divideNumbers = tool({
 });
 
 async function main() {
-  console.log('Begin Thinking...');
+  console.log(' Begin Thinking...');
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
   const mathAgent = agent({
@@ -59,5 +63,5 @@ async function main() {
 
 void main().then(() => {
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-  console.log('Done');
+  console.log(' Done');
 });

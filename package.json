@@ -6,8 +6,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsx src/example.ts",
-    "start": "node dist/example.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node dist/example.js"
   },
   "keywords": [],
   "author": "",
