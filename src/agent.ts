@@ -1,16 +1,32 @@
 import { agent } from '@llamaindex/workflow';
-import { ragTool } from './tools/rag.tools';
+import { ragSQLiteTool } from './tools/rag-sqlite.tools';
 import { sumNumbers, divideNumbers } from './tools/math.tools';
 import * as readline from 'readline';
 
 async function main() {
+  // Проверяваме дали искаме тих режим
+  const isVerbose = process.argv.includes('--verbose') || process.argv.includes('-v');
+  const refreshIndex = process.argv.includes('--refresh-index');
+  
   console.log(' Begin Thinking...');
   console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
+  // Ако е заявено refresh на индекса, направим го преди да стартираме агента
+  if (refreshIndex) {
+    console.log('🔄 Форсирано обновяване на RAG индекса...');
+    const ragModule = await import('./tools/rag-sqlite.tools');
+    const tempStore = new ragModule.SQLiteVectorStore();
+    await tempStore.refreshIndex();
+    tempStore.close();
+    console.log('✅ RAG индексът е обновен успешно!');
+    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    return; // Излизаме без да стартираме агента
+  }
+
   const agentTools = agent({
     timeout: 30000,
-    tools: [sumNumbers, divideNumbers, ragTool],
-    verbose: false,
+    tools: [sumNumbers, divideNumbers, ragSQLiteTool],
+    verbose: isVerbose,
     systemPrompt: `You are a helpful AI assistant that specializes in the Image Watermarking App project. 
 Always respond in Bulgarian language. Use the RAG tool to search documentation when users ask about:
 - Installation procedures (Node.js, Rust, wasm-pack)

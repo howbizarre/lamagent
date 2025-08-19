@@ -6,14 +6,18 @@
   "scripts": {
     "dev": "vite-node src/agent.ts",
     "build": "vite build",
-    "preview": "node dist/agent.js",
-    "start": "node dist/agent.js"
+    "preview": "node --max-old-space-size=12288 --expose-gc dist/agent.js",
+    "start": "node --max-old-space-size=12288 --expose-gc dist/agent.js",
+    "start:quiet": "node --max-old-space-size=12288 --expose-gc dist/agent.js --quiet",
+    "start:verbose": "node --max-old-space-size=12288 --expose-gc dist/agent.js --verbose",
+    "refresh-index": "node --max-old-space-size=12288 --expose-gc dist/agent.js --refresh-index"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "module",
   "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^24.2.1",
     "typescript": "^5.9.2",
     "vite": "^7.1.2",
@@ -23,7 +27,10 @@
     "@llamaindex/huggingface": "^0.1.26",
     "@llamaindex/ollama": "^0.1.20",
     "@llamaindex/workflow": "^1.1.20",
+    "better-sqlite3": "^12.2.0",
     "llamaindex": "^0.11.26",
+    "sqlite": "^5.1.1",
+    "sqlite-vss": "^0.1.2",
     "zod": "^3.25.76"
   }
 }
