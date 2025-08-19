@@ -1,5 +1,4 @@
 import { agent } from '@llamaindex/workflow';
-import { ragSQLiteTool } from './tools/rag-sqlite.tools';
 import { sumNumbers, divideNumbers } from './tools/math.tools';
 import * as readline from 'readline';
 
@@ -22,6 +21,10 @@ async function main() {
     console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
     return; // Излизаме без да стартираме агента
   }
+
+  // Импортираме RAG tool динамично
+  const ragModule = await import('./tools/rag-sqlite.tools');
+  const { ragSQLiteTool } = ragModule;
 
   const agentTools = agent({
     timeout: 30000,

@@ -247,7 +247,7 @@ class SQLiteVectorStore {
     const queryEmbedding = await this.getEmbedding(query);
     
     // Взимаме всички документи
-    const documents = this.db.prepare('SELECT * FROM documents ORDER BY created_at DESC LIMIT 50').all() as Array<{
+    const documents = this.db.prepare('SELECT * FROM documents ORDER BY created_at DESC LIMIT 500').all() as Array<{
       id: string;
       text: string;
       embedding: Buffer;
