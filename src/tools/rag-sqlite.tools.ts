@@ -423,9 +423,9 @@ async function getOrCreateVectorStore(): Promise<SQLiteVectorStore> {
 
 export const ragSQLiteTool = tool({
   name: 'ragSQLiteTool',
-  description: 'Оптимизиран SQLite RAG инструмент за бързо търсене в документацията за Image Watermarking App. Използва векторна база данни с persistent кеширане на embeddings за значително по-бърза производителност при повторни заявки.',
+  description: 'Optimized SQLite RAG tool for fast search in AI agent and RAG system documentation. Uses vector database with persistent embedding caching for significantly faster performance on repeated queries. Can answer questions in both Bulgarian and English about agent architecture, RAG implementation, vector stores, document processing, and technical details.',
   parameters: z.object({
-    query: z.string().describe('Заявката за търсене в документацията.')
+    query: z.string().describe('The search query for documentation lookup.')
   }),
   execute: async ({ query }: { query: string }) => {
     const startTime = Date.now();
