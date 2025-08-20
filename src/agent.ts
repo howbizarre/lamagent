@@ -1,6 +1,6 @@
 import { agent } from '@llamaindex/workflow';
-import { sumNumbers, divideNumbers } from './tools/math.tools';
-import { initLLM, defaultLLMConfig } from './tools/llm.settings';
+import { sumNumbers, divideNumbers, multiplyNumbers, subtractNumbers } from './tools/math.tools';
+import { initLLM, defaultLLMConfig } from './config/llm.settings';
 import { createInterface } from 'readline';
 
 async function main() {
@@ -37,16 +37,26 @@ async function main() {
 
   const agentTools = agent({
     timeout: 30000,
-    tools: [sumNumbers, divideNumbers, ragSQLiteTool],
+    tools: [sumNumbers, divideNumbers, multiplyNumbers, subtractNumbers, ragSQLiteTool],
     verbose: isVerbose,
-    systemPrompt: `You are a helpful AI assistant that specializes in the Image Watermarking App project. 
-Always respond in Bulgarian language. Use the RAG tool to search documentation when users ask about:
-- Installation procedures (Node.js, Rust, wasm-pack)
-- Project setup and prerequisites
-- WASM development and building
-- Image watermarking features
-- Deployment to Cloudflare
-- Troubleshooting issues
+    systemPrompt: `You are a helpful AI assistant that specializes in AI agent development and RAG (Retrieval-Augmented Generation) tools. 
+You can respond in both Bulgarian and English - automatically detect the user's language and respond accordingly.
+
+Use the RAG tool to search documentation when users ask about:
+- How the AI agent works and its architecture
+- Agent initialization and configuration
+- RAG SQLite tool functionality and implementation
+- Vector stores and embedding models
+- Document indexing and search capabilities
+- Tool integration and management
+- Agent communication and response handling
+- Technical implementation details
+
+The documentation includes detailed explanations of:
+- Agent workflow and main components (agent.ts)
+- RAG SQLite tool implementation and how it processes documents
+- Vector database operations and similarity search
+- Document chunking and embedding generation
 
 Provide clear, accurate answers based on the documentation. Format your responses properly without extra tags or markup.`
   });
