@@ -1,5 +1,5 @@
 import { agent } from '@llamaindex/workflow';
-import { sumNumbers, divideNumbers } from './tools/math.tools';
+import { sumNumbers, divideNumbers, multiplyNumbers, subtractNumbers } from './tools/math.tools';
 import { initLLM, defaultLLMConfig } from './tools/llm.settings';
 import { createInterface } from 'readline';
 
@@ -37,7 +37,7 @@ async function main() {
 
   const agentTools = agent({
     timeout: 30000,
-    tools: [sumNumbers, divideNumbers, ragSQLiteTool],
+    tools: [sumNumbers, divideNumbers, multiplyNumbers, subtractNumbers, ragSQLiteTool],
     verbose: isVerbose,
     systemPrompt: `You are a helpful AI assistant that specializes in AI agent development and RAG (Retrieval-Augmented Generation) tools. 
 You can respond in both Bulgarian and English - automatically detect the user's language and respond accordingly.
