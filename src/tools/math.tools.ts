@@ -36,3 +36,35 @@ export const divideNumbers = tool({
     return result.toString();
   }
 });
+
+export const multiplyNumbers = tool({
+  name: 'multiplyNumbers',
+  description: 'Multiply two numbers together. Always use this tool when you need to perform multiplication.',
+  parameters: z.object({
+    a: z.coerce.number().describe('The first number to multiply'),
+    b: z.coerce.number().describe('The second number to multiply')
+  }),
+
+  execute: ({ a, b }: { a: number; b: number }) => {
+    console.log(`MATH Tool MULTIPLY: Calculating multiplication of ${a} and ${b}`);
+
+    const result = a * b;
+    return result.toString();
+  }
+});
+
+export const subtractNumbers = tool({
+  name: 'subtractNumbers',
+  description: 'Subtract one number from another. Always use this tool when you need to perform subtraction.',
+  parameters: z.object({
+    a: z.coerce.number().describe('The minuend (number to subtract from)'),
+    b: z.coerce.number().describe('The subtrahend (number to be subtracted)')
+  }),
+
+  execute: ({ a, b }: { a: number; b: number }) => {
+    console.log(`MATH Tool SUBTRACT: Calculating subtraction of ${b} from ${a}`);
+
+    const result = a - b;
+    return result.toString();
+  }
+});
