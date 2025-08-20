@@ -1,6 +1,6 @@
 import { agent } from '@llamaindex/workflow';
 import { sumNumbers, divideNumbers, multiplyNumbers, subtractNumbers } from './tools/math.tools';
-import { initLLM, defaultLLMConfig } from './tools/llm.settings';
+import { initLLM, defaultLLMConfig } from './config/llm.settings';
 import { createInterface } from 'readline';
 
 async function main() {
