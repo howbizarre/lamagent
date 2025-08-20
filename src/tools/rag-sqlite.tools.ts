@@ -1,7 +1,6 @@
-import { tool, Settings } from 'llamaindex';
+import { tool } from 'llamaindex';
 import { z } from 'zod';
 import { HuggingFaceEmbedding } from '@llamaindex/huggingface';
-import { Ollama } from '@llamaindex/ollama';
 import { readFileSync, readdirSync, existsSync } from 'fs';
 import { basename, join } from 'path';
 import Database from 'better-sqlite3';
@@ -18,14 +17,6 @@ function log(message: string) {
 function logError(message: string, error?: any) {
   console.error(message, error || '');
 }
-
-// Configure LLM only (embedding се инициализира lazy)
-Settings.llm = new Ollama({
-  model: 'llama3.1:8b',
-  config: {
-    host: 'http://localhost:11434'
-  }
-});
 
 class SQLiteVectorStore {
   private db: Database.Database;

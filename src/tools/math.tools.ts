@@ -1,13 +1,5 @@
-import { Ollama } from '@llamaindex/ollama';
-import { tool, Settings } from 'llamaindex';
+import { tool } from 'llamaindex';
 import { z } from 'zod';
-
-Settings.llm = new Ollama({
-  model: 'llama3.1:8b',
-  config: {
-    host: 'http://localhost:11434'
-  }
-});
 
 export const sumNumbers = tool({
   name: 'sumNumbers',

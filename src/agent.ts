@@ -1,8 +1,13 @@
 import { agent } from '@llamaindex/workflow';
 import { sumNumbers, divideNumbers } from './tools/math.tools';
+import { initLLM, defaultLLMConfig } from './tools/llm.settings';
 import { createInterface } from 'readline';
 
 async function main() {
+  // Initialize LLM settings first
+  initLLM(defaultLLMConfig);
+  console.log('🔧 LLM инициализиран:', defaultLLMConfig);
+
   // check if verbose or refresh index
   const isVerbose = process.argv.includes('--verbose') || process.argv.includes('-v');
   const refreshIndex = process.argv.includes('--refresh-index');
